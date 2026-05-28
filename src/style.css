@@ -205,6 +205,13 @@ html, body {
   letter-spacing: 0.5px;
 }
 
+.credit-text {
+  font-size: 10px;
+  color: var(--gray);
+  letter-spacing: 0.5px;
+  margin-left: auto;
+}
+
 /* ===== 设置页面 ===== */
 .settings-header {
   display: flex;
