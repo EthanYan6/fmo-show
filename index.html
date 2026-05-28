@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>FMO Show</title>
+  <link rel="stylesheet" href="style.min.css">
+</head>
+<body>
+  <!-- 主页面 -->
+  <div id="main-page" class="page active">
+    <div class="top-bar">
+      <span id="datetime-display">----/--/-- --:--</span>
+      <div class="top-controls">
+        <span class="status-dot" id="status-dot"></span>
+        <button id="fullscreen-btn" class="icon-btn" aria-label="全屏">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 3 21 3 21 9"/>
+            <polyline points="9 21 3 21 3 15"/>
+            <line x1="21" y1="3" x2="14" y2="10"/>
+            <line x1="3" y1="21" x2="10" y2="14"/>
+          </svg>
+        </button>
+        <button id="settings-btn" class="icon-btn" aria-label="设置">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="main-center">
+      <div class="top-row">
+        <div class="signal-indicator">
+          <img src="svg/网络_信号发射.svg" class="signal-icon" alt="信号">
+          <div class="signal-text">
+            <span id="connection-text" class="connection-text">未连接</span>
+            <span id="center-datetime" class="datetime-text">----/--/-- --:--</span>
+          </div>
+        </div>
+        <div class="filter-info">
+          <img src="svg/ip.svg" class="filter-icon" alt="IP">
+          <span id="my-ip">------</span>
+          <img src="svg/定位.svg" class="filter-icon" alt="网格">
+          <span id="grid-locator">------</span>
+        </div>
+      </div>
+      <div class="callsign-row">
+        <span id="incoming-callsign" class="callsign">------</span>
+        <span id="server-name" class="server-badge">SERVER</span>
+      </div>
+      <div class="info-row">
+        <span class="info-item">
+          <img src="svg/定位.svg" class="info-icon" alt="对方网格">
+          <span id="peer-grid">------</span>
+        </span>
+        <span class="info-item">
+          <img src="svg/对讲机.svg" class="info-icon" alt="对方设备">
+          <span id="peer-device">------</span>
+        </span>
+        <span class="info-item">
+          <img src="svg/定位 (1).svg" class="info-icon" alt="对方天线">
+          <span id="peer-ant">------</span>
+        </span>
+        <span class="info-item">
+          <img src="svg/喇叭.svg" class="info-icon" alt="我的呼号">
+          <span id="my-callsign">------</span>
+        </span>
+        <span class="info-item">
+          <img src="svg/五角星.svg" class="info-icon" alt="通联">
+          <span id="today-qso">--</span>/<span id="total-qso">--</span>
+        </span>
+      </div>
+      <div class="footer-row">
+        <img src="svg/wulian.svg" class="footer-icon" alt="物联">
+        <span class="footer-text">地球online提醒您：您并不孤单，共有 <span id="busuanzi-value">--</span> 人与您一起守听。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 设置页面 -->
+  <div id="settings-page" class="page">
+    <div class="settings-header">
+      <button id="back-btn" class="back-btn" aria-label="返回">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+      </button>
+      <span class="settings-title">设置</span>
+    </div>
+
+    <div class="settings-body">
+      <div class="settings-section">
+        <h3 class="section-title">服务器连接</h3>
+        
+        <div class="form-group">
+          <label for="fmo-ip">FMO 服务器地址</label>
+          <input type="text" id="fmo-ip" placeholder="192.168.1.100" autocomplete="off">
+          <div class="form-hint">请输入 FMO 设备的 IP 地址或域名</div>
+        </div>
+
+        <div class="form-group">
+          <label for="fmo-port">端口号</label>
+          <input type="text" id="fmo-port" placeholder="80" autocomplete="off">
+          <div class="form-hint">WebSocket 端口，通常为 80</div>
+        </div>
+
+        <div class="form-group">
+          <label for="fmo-protocol">协议</label>
+          <select id="fmo-protocol" class="protocol-select">
+            <option value="ws">ws (非加密)</option>
+            <option value="wss">wss (加密)</option>
+          </select>
+          <div class="form-hint">本地网络通常使用 ws，公网建议使用 wss</div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="section-title">连接状态</h3>
+        <div class="connection-status">
+          <div class="status-row">
+            <span class="status-label">当前服务器:</span>
+            <span id="current-server-display" class="status-value">未连接</span>
+          </div>
+          <div class="status-row">
+            <span class="status-label">连接状态:</span>
+            <span id="connection-status-display" class="status-value">未连接</span>
+          </div>
+        </div>
+      </div>
+
+      <button id="save-btn" class="save-btn">保存并连接</button>
+      <div id="save-status" class="save-status hidden"></div>
+    </div>
+  </div>
+
+  <script src="app.min.js"></script>
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var displayEl = document.getElementById('busuanzi-value');
+      var busuanziEl = document.getElementById('busuanzi_value_site_pv');
+      var retryCount = 0;
+      var maxRetries = 20;
+      var initialCheck = setInterval(function() {
+        if (busuanziEl && busuanziEl.textContent && busuanziEl.textContent !== '--') {
+          displayEl.textContent = busuanziEl.textContent;
+          clearInterval(initialCheck);
+          setInterval(function() {
+            if (busuanziEl && busuanziEl.textContent && busuanziEl.textContent !== '--') {
+              displayEl.textContent = busuanziEl.textContent;
+            }
+          }, 5000);
+        }
+        retryCount++;
+        if (retryCount >= maxRetries) {
+          clearInterval(initialCheck);
+        }
+      }, 500);
+    });
+  </script>
+  <span id="busuanzi_container_site_pv" style="display:none">
+    <span id="busuanzi_value_site_pv"></span>
+  </span>
+</body>
+</html>
