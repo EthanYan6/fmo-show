@@ -2,6 +2,11 @@ const RESPONSE_ALIASES = {
   station: { getListRange: 'getListResponse' }
 };
 
+function normalizeHost(address) {
+  if (!address) return '';
+  return address.trim().replace(/^(https?|wss?):?\/\//, '').replace(/\/+$/, '');
+}
+
 const App = {
   ws: null,
   eventsWs: null,
@@ -185,8 +190,9 @@ const App = {
   connect(ip, port) {
     this.updateStatus('connecting');
     const protocol = this.protocol;
-    this.connectMainWs(`${protocol}://${ip}:${port}/ws`);
-    this.connectEventsWs(`${protocol}://${ip}:${port}/events`);
+    const host = normalizeHost(ip);
+    this.connectMainWs(`${protocol}://${host}:${port}/ws`);
+    this.connectEventsWs(`${protocol}://${host}:${port}/events`);
   },
 
   connectMainWs(url) {
