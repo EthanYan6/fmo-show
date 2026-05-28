@@ -132,7 +132,9 @@ const App = {
     if (settings) {
       const { ip, port, protocol } = JSON.parse(settings);
       this.protocol = protocol || 'ws';
-      if (ip) this.connect(ip, port || '80');
+      if (ip) {
+        this.connect(ip, port || '80');
+      }
     }
   },
 
@@ -206,9 +208,27 @@ const App = {
         this.stopStationPolling();
         this.scheduleReconnect();
       };
-      this.ws.onerror = () => {};
+      this.ws.onerror = (error) => {
+        console.error('WebSocket连接错误:', error);
+        // 移动端连接失败时显示提示
+        if (this.reconnectAttempts === 0) {
+          this.showConnectionError();
+        }
+      };
     } catch (e) {
       this.updateStatus('disconnected');
+      this.showConnectionError();
+    }
+  },
+
+  showConnectionError() {
+    // 检测是否是移动端
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile && !this.connected) {
+      const settings = localStorage.getItem('fmo-settings');
+      if (!settings) {
+        this.showSaveStatus('请确保手机与FMO设备在同一网络，然后点击右上角设置按钮配置服务器地址', 'info');
+      }
     }
   },
 
@@ -468,11 +488,28 @@ const App = {
   checkFirstVisit() {
     const settings = localStorage.getItem('fmo-settings');
     if (!settings) {
-      // 首次访问，自动跳转到设置页面
-      setTimeout(() => {
-        this.showPage('settings-page');
-        this.showSaveStatus('首次使用请先设置FMO服务器地址', 'info');
-      }, 500);
+      // 首次访问，尝试连接默认地址 fmo.local
+      this.showSaveStatus('正在尝试连接默认服务器 fmo.local...', 'info');
+      this.connect('fmo.local', '80');
+
+      // 监听连接结果
+      const checkConnection = setTimeout(() => {
+        if (!this.connected) {
+          this.showSaveStatus('无法连接到默认服务器，请手动设置', 'error');
+          setTimeout(() => {
+            this.showPage('settings-page');
+            document.getElementById('fmo-ip').value = 'fmo.local';
+          }, 1500);
+        }
+      }, 5000);
+
+      // 如果连接成功，清除检查定时器
+      const originalOnOpen = this.ws?.onopen;
+      if (this.ws) {
+        this.ws.addEventListener('open', () => {
+          clearTimeout(checkConnection);
+        }, { once: true });
+      }
     }
   },
 
