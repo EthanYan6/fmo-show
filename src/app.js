@@ -21,6 +21,7 @@ const App = {
     this.showPage('main-page');
     this.startDatetime();
     this.updateConnectionText(false);
+    this.initOrientationDetection();
   },
 
   bindEvents() {
@@ -459,7 +460,88 @@ const App = {
     }
   },
 
-  handleMessage(data) {}
+  handleMessage(data) {},
+
+  initOrientationDetection() {
+    // 检测横屏状态
+    const checkOrientation = () => {
+      const isLandscape = window.innerWidth > window.innerHeight;
+      const isSmallHeight = window.innerHeight <= 500;
+
+      if (isLandscape && isSmallHeight) {
+        document.body.classList.add('landscape-mode');
+        // 横屏时确保设置页面也能正常访问
+        this.handleLandscapeMode();
+      } else {
+        document.body.classList.remove('landscape-mode');
+      }
+    };
+
+    // 初始检测
+    checkOrientation();
+
+    // 监听屏幕方向变化
+    window.addEventListener('orientationchange', () => {
+      setTimeout(checkOrientation, 100);
+    });
+
+    // 监听窗口大小变化
+    window.addEventListener('resize', () => {
+      checkOrientation();
+    });
+  },
+
+  handleLandscapeMode() {
+    // 在横屏模式下，添加一个临时的设置按钮到主内容区域
+    const mainCenter = document.querySelector('.main-center');
+    if (!mainCenter) return;
+
+    // 检查是否已经有横屏设置按钮
+    let landscapeSettingsBtn = document.getElementById('landscape-settings-btn');
+    if (!landscapeSettingsBtn) {
+      landscapeSettingsBtn = document.createElement('button');
+      landscapeSettingsBtn.id = 'landscape-settings-btn';
+      landscapeSettingsBtn.className = 'landscape-settings-btn';
+      landscapeSettingsBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+        </svg>
+      `;
+      landscapeSettingsBtn.style.cssText = `
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(0,0,0,0.1);
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 100;
+        color: var(--black);
+      `;
+
+      // 添加触摸事件
+      landscapeSettingsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.showPage('settings-page');
+        this.updateSettingsDisplay();
+      });
+
+      landscapeSettingsBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        this.showPage('settings-page');
+        this.updateSettingsDisplay();
+      }, { passive: false });
+
+      mainCenter.style.position = 'relative';
+      mainCenter.appendChild(landscapeSettingsBtn);
+    }
+  }
 };
 
 document.addEventListener('DOMContentLoaded', () => App.init());
