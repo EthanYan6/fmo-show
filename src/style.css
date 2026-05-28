@@ -397,6 +397,29 @@ body.fullscreen .top-bar {
   display: none;
 }
 
+/* 移动端按钮优化 */
+@media (max-width: 768px) {
+  .icon-btn {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .icon-btn:active {
+    opacity: 0.6;
+    transform: scale(0.95);
+    transition: opacity 0.1s, transform 0.1s;
+  }
+
+  .top-controls {
+    gap: 12px;
+  }
+}
+
 @media (max-width: 480px) {
   .callsign {
     font-size: 30px;

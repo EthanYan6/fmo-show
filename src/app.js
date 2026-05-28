@@ -24,17 +24,37 @@ const App = {
   },
 
   bindEvents() {
-    document.getElementById('back-btn').addEventListener('click', () => {
+    // 添加移动端触摸事件支持
+    const addTouchEvent = (element, handler) => {
+      if (!element) return;
+
+      // 桌面端点击事件
+      element.addEventListener('click', (e) => {
+        e.preventDefault();
+        handler();
+      });
+
+      // 移动端触摸事件
+      element.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        handler();
+      }, { passive: false });
+    };
+
+    addTouchEvent(document.getElementById('back-btn'), () => {
       this.showPage('main-page');
     });
-    document.getElementById('save-btn').addEventListener('click', () => {
+
+    addTouchEvent(document.getElementById('save-btn'), () => {
       this.saveSettings();
     });
-    document.getElementById('settings-btn').addEventListener('click', () => {
+
+    addTouchEvent(document.getElementById('settings-btn'), () => {
       this.showPage('settings-page');
       this.updateSettingsDisplay();
     });
-    document.getElementById('fullscreen-btn').addEventListener('click', () => {
+
+    addTouchEvent(document.getElementById('fullscreen-btn'), () => {
       this.toggleFullscreen();
     });
   },
@@ -45,14 +65,46 @@ const App = {
   },
 
   toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => {
-        document.body.classList.add('fullscreen');
-      });
+    // 检测是否支持全屏API
+    const fullscreenEnabled = document.fullscreenEnabled ||
+                              document.webkitFullscreenEnabled ||
+                              document.mozFullScreenEnabled ||
+                              document.msFullscreenEnabled;
+
+    if (!fullscreenEnabled) {
+      // 移动端不支持全屏API时，使用CSS模拟全屏效果
+      document.body.classList.toggle('fullscreen');
+      return;
+    }
+
+    if (!document.fullscreenElement &&
+        !document.webkitFullscreenElement &&
+        !document.mozFullScreenElement &&
+        !document.msFullscreenElement) {
+      // 进入全屏
+      const element = document.documentElement;
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+      }
+      document.body.classList.add('fullscreen');
     } else {
-      document.exitFullscreen().then(() => {
-        document.body.classList.remove('fullscreen');
-      });
+      // 退出全屏
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+      document.body.classList.remove('fullscreen');
     }
   },
 
