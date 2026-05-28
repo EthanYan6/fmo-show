@@ -317,6 +317,12 @@ html, body {
   color: var(--black);
 }
 
+.save-status.info {
+  background: var(--light-gray);
+  border: 1px solid var(--border-color);
+  color: var(--gray);
+}
+
 .settings-section {
   margin-bottom: 24px;
   padding-bottom: 20px;

@@ -22,6 +22,7 @@ const App = {
     this.startDatetime();
     this.updateConnectionText(false);
     this.initOrientationDetection();
+    this.checkFirstVisit();
   },
 
   bindEvents() {
@@ -174,7 +175,9 @@ const App = {
     const el = document.getElementById('save-status');
     el.textContent = msg;
     el.className = `save-status ${type}`;
-    setTimeout(() => el.className = 'save-status hidden', 2000);
+    if (type !== 'info') {
+      setTimeout(() => el.className = 'save-status hidden', 2000);
+    }
   },
 
   connect(ip, port) {
@@ -461,6 +464,17 @@ const App = {
   },
 
   handleMessage(data) {},
+
+  checkFirstVisit() {
+    const settings = localStorage.getItem('fmo-settings');
+    if (!settings) {
+      // 首次访问，自动跳转到设置页面
+      setTimeout(() => {
+        this.showPage('settings-page');
+        this.showSaveStatus('首次使用请先设置FMO服务器地址', 'info');
+      }, 500);
+    }
+  },
 
   initOrientationDetection() {
     // 检测横屏状态
