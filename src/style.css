@@ -468,96 +468,25 @@ body.fullscreen .top-bar {
     height: 100vh;
   }
 
-  /* 等比例放大主内容区域 */
+  /* 主内容区域 */
   .main-center {
     padding: 8px 16px;
-    gap: 0;
-    justify-content: center;
-    transform-origin: center center;
-  }
-
-  /* 根据视口高度等比例缩放 */
-  .top-row {
-    margin-bottom: 2vh;
-  }
-
-  .signal-icon {
-    width: 5vh;
-    height: 5vh;
-  }
-
-  .signal-text {
-    gap: 0.5vh;
-  }
-
-  .connection-text,
-  .datetime-text {
-    font-size: 2vh;
-  }
-
-  .filter-info {
-    font-size: 2vh;
-    gap: 2vw;
-  }
-
-  .filter-icon {
-    width: 2.5vh;
-    height: 2.5vh;
-  }
-
-  .callsign-row {
-    margin-bottom: 1.5vh;
-    gap: 2vw;
-  }
-
-  .callsign {
-    font-size: 8vh;
-    letter-spacing: 0.5vw;
-  }
-
-  .server-badge {
-    font-size: 5vh;
-    padding: 1vh 3vw;
-  }
-
-  .info-row {
-    gap: 3vw;
-    font-size: 2.5vh;
-    margin-bottom: 1.5vh;
-  }
-
-  .info-icon {
-    width: 3vh;
-    height: 3vh;
-  }
-
-  .info-item {
-    gap: 1vw;
-  }
-
-  .footer-row {
-    gap: 2vw;
-    font-size: 1.8vh;
-  }
-
-  .footer-icon {
-    width: 2.5vh;
-    height: 2.5vh;
+    gap: 8px;
   }
 }
 
 /* 超宽屏优化 */
 @media (orientation: landscape) and (min-width: 900px) and (max-height: 500px) {
   .callsign {
-    font-size: 10vh;
+    font-size: 56px;
   }
 
   .server-badge {
-    font-size: 6vh;
+    font-size: 32px;
   }
 
   .info-row {
-    font-size: 3vh;
+    font-size: 16px;
   }
 }
 
