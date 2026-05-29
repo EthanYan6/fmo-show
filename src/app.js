@@ -76,11 +76,18 @@ const App = {
       this.toggleFullscreen();
     });
     
-    const speakerIcon = document.querySelector('.info-item:nth-child(4) .info-icon');
+    const speakerIcon = document.querySelector('img[alt="我的呼号"]');
     if (speakerIcon) {
-      addTouchEvent(speakerIcon, () => {
+      speakerIcon.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         this.toggleMute();
       });
+      speakerIcon.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleMute();
+      }, { passive: false });
       speakerIcon.style.cursor = 'pointer';
     }
   },
@@ -643,6 +650,16 @@ const App = {
     this.isMuted = !this.isMuted;
     localStorage.setItem('fmo-muted', this.isMuted.toString());
     
+    if (!this.audioCtx) {
+      this.initAudio();
+    }
+    
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      this.audioCtx.resume().then(() => {
+        console.log('AudioContext resumed on user interaction');
+      }).catch(e => console.error('AudioContext resume failed:', e));
+    }
+    
     if (this.gainNode) {
       this.gainNode.gain.value = this.isMuted ? 0 : 1.0;
     }
@@ -655,7 +672,7 @@ const App = {
   },
 
   updateMuteIcon() {
-    const speakerIcon = document.querySelector('.info-item:nth-child(4) .info-icon');
+    const speakerIcon = document.querySelector('img[alt="我的呼号"]');
     if (!speakerIcon) return;
     
     if (this.isMuted) {
