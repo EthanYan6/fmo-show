@@ -10,6 +10,7 @@ function normalizeHost(address) {
 const App = {
   ws: null,
   eventsWs: null,
+  audioWs: null,
   connected: false,
   protocol: 'ws',
   reconnectAttempts: 0,
@@ -19,6 +20,14 @@ const App = {
   datetimeTimer: null,
   stationPollingTimer: null,
   myCallsign: '',
+  
+  audioCtx: null,
+  gainNode: null,
+  audioConnected: false,
+  isMuted: false,
+  audioChunkQueue: [],
+  audioScheduledEndTime: 0,
+  inputSampleRate: 8000,
 
   init() {
     this.bindEvents();
@@ -28,6 +37,8 @@ const App = {
     this.updateConnectionText(false);
     this.initOrientationDetection();
     this.checkFirstVisit();
+    this.initAudio();
+    this.loadMuteState();
   },
 
   bindEvents() {
@@ -64,6 +75,14 @@ const App = {
     addTouchEvent(document.getElementById('fullscreen-btn'), () => {
       this.toggleFullscreen();
     });
+    
+    const speakerIcon = document.querySelector('.info-item:nth-child(4) .info-icon');
+    if (speakerIcon) {
+      addTouchEvent(speakerIcon, () => {
+        this.toggleMute();
+      });
+      speakerIcon.style.cursor = 'pointer';
+    }
   },
 
   showPage(pageId) {
@@ -191,8 +210,10 @@ const App = {
     this.updateStatus('connecting');
     const protocol = this.protocol;
     const host = normalizeHost(ip);
-    this.connectMainWs(`${protocol}://${host}:${port}/ws`);
-    this.connectEventsWs(`${protocol}://${host}:${port}/events`);
+    const fullHost = `${host}:${port}`;
+    this.connectMainWs(`${protocol}://${fullHost}/ws`);
+    this.connectEventsWs(`${protocol}://${fullHost}/events`);
+    this.connectAudio(fullHost);
   },
 
   connectMainWs(url) {
@@ -251,6 +272,7 @@ const App = {
     this.stopStationPolling();
     if (this.ws) { this.ws.close(); this.ws = null; }
     if (this.eventsWs) { this.eventsWs.close(); this.eventsWs = null; }
+    this.disconnectAudio();
     this.connected = false;
     this.updateStatus('disconnected');
   },
@@ -597,6 +619,146 @@ const App = {
 
       mainCenter.style.position = 'relative';
       mainCenter.appendChild(landscapeSettingsBtn);
+    }
+  },
+
+  initAudio() {
+    try {
+      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      this.gainNode = this.audioCtx.createGain();
+      this.gainNode.gain.value = 1.0;
+      this.gainNode.connect(this.audioCtx.destination);
+    } catch (e) {
+      console.error('Failed to initialize audio context:', e);
+    }
+  },
+
+  loadMuteState() {
+    const savedMute = localStorage.getItem('fmo-muted');
+    this.isMuted = savedMute === 'true';
+    this.updateMuteIcon();
+  },
+
+  toggleMute() {
+    this.isMuted = !this.isMuted;
+    localStorage.setItem('fmo-muted', this.isMuted.toString());
+    
+    if (this.gainNode) {
+      this.gainNode.gain.value = this.isMuted ? 0 : 1.0;
+    }
+    
+    this.updateMuteIcon();
+    
+    if (navigator.vibrate) {
+      navigator.vibrate(10);
+    }
+  },
+
+  updateMuteIcon() {
+    const speakerIcon = document.querySelector('.info-item:nth-child(4) .info-icon');
+    if (!speakerIcon) return;
+    
+    if (this.isMuted) {
+      speakerIcon.style.opacity = '0.3';
+      speakerIcon.style.filter = 'grayscale(100%)';
+    } else {
+      speakerIcon.style.opacity = '1';
+      speakerIcon.style.filter = 'none';
+    }
+  },
+
+  connectAudio(host) {
+    if (this.audioWs && (this.audioConnected || this.audioWs.readyState === WebSocket.CONNECTING)) {
+      return;
+    }
+
+    if (!this.audioCtx) {
+      this.initAudio();
+    }
+
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      this.audioCtx.resume();
+    }
+
+    const protocol = this.protocol;
+    const url = `${protocol}://${host}/audio`;
+
+    try {
+      this.audioWs = new WebSocket(url);
+      this.audioWs.binaryType = 'arraybuffer';
+
+      this.audioWs.onopen = () => {
+        this.audioConnected = true;
+        console.log('Audio WebSocket connected');
+      };
+
+      this.audioWs.onclose = () => {
+        this.audioConnected = false;
+        console.log('Audio WebSocket disconnected');
+      };
+
+      this.audioWs.onerror = (e) => {
+        console.error('Audio WebSocket error:', e);
+        this.audioConnected = false;
+      };
+
+      this.audioWs.onmessage = (evt) => {
+        if (this.isMuted) return;
+        const buf = evt.data;
+        if (!(buf instanceof ArrayBuffer)) return;
+        this.processAudioData(buf);
+      };
+    } catch (e) {
+      console.error('Failed to connect audio WebSocket:', e);
+    }
+  },
+
+  disconnectAudio() {
+    if (this.audioWs) {
+      try {
+        this.audioWs.close();
+      } catch (e) {}
+      this.audioWs = null;
+    }
+    this.audioConnected = false;
+    this.audioChunkQueue = [];
+    this.audioScheduledEndTime = 0;
+  },
+
+  processAudioData(arrayBuffer) {
+    if (!this.audioCtx || !this.gainNode) return;
+
+    const view = new Int16Array(arrayBuffer);
+    const f32 = new Float32Array(view.length);
+    for (let i = 0; i < view.length; i++) {
+      f32[i] = view[i] / 32768;
+    }
+
+    this.audioChunkQueue.push(f32);
+    this.scheduleAudioPlayback();
+  },
+
+  scheduleAudioPlayback() {
+    if (!this.audioCtx) return;
+
+    const now = this.audioCtx.currentTime;
+    if (this.audioScheduledEndTime < now) {
+      this.audioScheduledEndTime = now;
+    }
+
+    while (this.audioChunkQueue.length > 0) {
+      const chunk = this.audioChunkQueue.shift();
+      
+      const buffer = this.audioCtx.createBuffer(1, chunk.length, this.inputSampleRate);
+      buffer.copyToChannel(chunk, 0, 0);
+
+      const src = this.audioCtx.createBufferSource();
+      src.buffer = buffer;
+      src.connect(this.gainNode);
+
+      const duration = chunk.length / this.inputSampleRate;
+      src.start(this.audioScheduledEndTime);
+      this.audioScheduledEndTime += duration;
     }
   }
 };
