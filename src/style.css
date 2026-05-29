@@ -77,7 +77,7 @@ html, body {
   display: flex;
   align-items: flex-end;
   width: 100%;
-  max-width: 500px;
+  max-width: 650px;
   gap: 8px;
 }
 
@@ -89,8 +89,8 @@ html, body {
 }
 
 .signal-icon {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
 }
 
@@ -101,13 +101,13 @@ html, body {
 }
 
 .connection-text {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--black);
 }
 
 .datetime-text {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--gray);
 }
@@ -118,15 +118,15 @@ html, body {
   align-items: center;
   justify-content: flex-start;
   gap: 12px;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--gray);
   padding-bottom: 2px;
 }
 
 .filter-icon {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
 }
 
 .callsign-row {
@@ -135,12 +135,12 @@ html, body {
   justify-content: center;
   gap: 8px;
   width: 100%;
-  max-width: 500px;
+  max-width: 650px;
 }
 
 .callsign {
   flex: 1;
-  font-size: 48px;
+  font-size: 60px;
   font-weight: 700;
   letter-spacing: 3px;
   line-height: 1.1;
@@ -150,9 +150,9 @@ html, body {
 
 .server-badge {
   flex: 1;
-  font-size: 28px;
+  font-size: 36px;
   font-weight: 700;
-  padding: 8px 20px;
+  padding: 10px 24px;
   background: var(--black);
   color: var(--white);
   border-radius: 4px;
@@ -162,10 +162,11 @@ html, body {
 
 .info-row {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  font-size: 14px;
+  width: 100%;
+  max-width: 650px;
+  font-size: 18px;
   font-weight: 600;
   letter-spacing: 1px;
   color: var(--black);
@@ -179,8 +180,8 @@ html, body {
 
 .info-icon {
   flex-shrink: 0;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
 }
 
 .footer-row {
@@ -188,7 +189,7 @@ html, body {
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  max-width: 500px;
+  max-width: 650px;
   gap: 6px;
   font-size: 11px;
   font-weight: 600;
