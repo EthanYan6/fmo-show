@@ -436,12 +436,12 @@ body.fullscreen .top-bar {
 
 @media (max-width: 480px) {
   .callsign {
-    font-size: 30px;
+    font-size: 40px;
   }
 
   .server-badge {
-    font-size: 16px;
-    padding: 4px 10px;
+    font-size: 24px;
+    padding: 6px 14px;
   }
 
   .top-bar {
@@ -454,6 +454,21 @@ body.fullscreen .top-bar {
 
   .info-row {
     font-size: 16px;
+  }
+  
+  .signal-icon {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .info-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .connection-text,
+  .datetime-text {
+    font-size: 14px;
   }
 }
 
