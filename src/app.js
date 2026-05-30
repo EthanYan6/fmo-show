@@ -470,6 +470,27 @@ const App = {
     }
   },
 
+  renderStationList(list, currentUid) {
+    const container = document.getElementById('server-list-container');
+    container.innerHTML = '';
+
+    if (list.length === 0) {
+      container.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--gray);">暂无可用服务器</div>';
+      return;
+    }
+
+    list.forEach(station => {
+      const item = document.createElement('div');
+      item.className = 'server-item' + (station.uid === currentUid ? ' active' : '');
+      item.innerHTML = `
+        <span class="server-item-name">${station.name || '未命名'}</span>
+        ${station.uid === currentUid ? '<span class="server-item-check">&#10003;</span>' : ''}
+      `;
+      item.addEventListener('click', () => this.switchStation(station.uid));
+      container.appendChild(item);
+    });
+  },
+
   async fetchUserPhyDeviceName() {
     try {
       const resp = await this.sendRequest({ type: 'config', subType: 'getUserPhyDeviceName' });
