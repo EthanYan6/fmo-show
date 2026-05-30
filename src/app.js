@@ -455,6 +455,21 @@ const App = {
     modal.classList.add('hidden');
   },
 
+  async fetchStationList() {
+    try {
+      const resp = await this.sendRequest({ type: 'station', subType: 'getListRange', data: { start: 0, count: 100 } });
+      if (resp.code === 0 && resp.data) {
+        const list = resp.data.list || [];
+        const currentResp = await this.sendRequest({ type: 'station', subType: 'getCurrent' });
+        const currentUid = currentResp.code === 0 ? currentResp.data?.uid : 0;
+        this.renderStationList(list, currentUid);
+      }
+    } catch (e) {
+      console.error('获取服务器列表失败:', e);
+      this.closeServerModal();
+    }
+  },
+
   async fetchUserPhyDeviceName() {
     try {
       const resp = await this.sendRequest({ type: 'config', subType: 'getUserPhyDeviceName' });
