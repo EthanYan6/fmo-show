@@ -35,12 +35,13 @@
         <div class="signal-indicator">
           <img src="src/svg/网络_信号发射.svg" class="signal-icon" alt="信号">
           <div class="signal-text">
-            <div class="connection-row"><span id="connection-text" class="connection-text">未连接</span><span class="version-text">v1.2</span></div>
+            <div class="connection-row"><span id="connection-text" class="connection-text">未连接</span><span class="version-text">v1.3</span></div>
             <span id="center-datetime" class="datetime-text">----/--/-- --:--</span>
           </div>
         </div>
         <div class="filter-info">
           <span class="filter-group"><img src="src/svg/ip.svg" class="filter-icon" alt="IP"><span id="my-ip">------</span></span>
+          <span class="filter-group"><img src="src/svg/对讲机.svg" class="filter-icon" alt="对方设备"><span id="peer-device">------</span></span>
           <span class="filter-group"><img src="src/svg/定位.svg" class="filter-icon" alt="网格"><span id="grid-locator">------</span></span>
         </div>
       </div>
@@ -54,8 +55,8 @@
           <span id="peer-grid">------</span>
         </span>
         <span class="info-item">
-          <img src="src/svg/对讲机.svg" class="info-icon" alt="对方设备">
-          <span id="peer-device">------</span>
+          <img src="src/svg/最近来访.svg" class="info-icon" alt="最近来访">
+          <span id="last-callsign">------</span>
         </span>
         <span class="info-item">
           <img src="src/svg/定位 (1).svg" class="info-icon" alt="对方天线">
@@ -93,7 +94,7 @@
     <div class="settings-body">
       <div class="settings-section">
         <h3 class="section-title">服务器连接</h3>
-        
+
         <div class="form-group">
           <label for="fmo-ip">FMO 服务器地址</label>
           <input type="text" id="fmo-ip" placeholder="192.168.1.100 或 fmo.local" autocomplete="off">

@@ -715,6 +715,9 @@ const App = {
       const d = ev.data;
       if (d.isSpeaking && d.callsign) {
         document.getElementById('incoming-callsign').textContent = d.callsign;
+        if (d.callsign !== this.myCallsign) {
+          document.getElementById('last-callsign').textContent = d.callsign;
+        }
         this.updateCallsignBadge(d.callsign);
         if (d.grid) {
           document.getElementById('peer-grid').textContent = d.grid;
@@ -733,7 +736,7 @@ const App = {
       return;
     }
     const count = this.qsoList.filter(item => item.toCallsign === callsign).length;
-    badge.textContent = count > 0 ? count : '新';
+    badge.textContent = callsign === this.myCallsign ? '本人' : (count > 0 ? count : '新');
     badge.classList.add('visible');
   },
 
