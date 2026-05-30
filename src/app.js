@@ -90,6 +90,19 @@ const App = {
       }, { passive: false });
       speakerIcon.style.cursor = 'pointer';
     }
+
+    // 服务器列表弹窗
+    addTouchEvent(document.getElementById('server-modal-close'), () => {
+      this.closeServerModal();
+    });
+
+    addTouchEvent(document.getElementById('server-modal-overlay'), () => {
+      this.closeServerModal();
+    });
+
+    addTouchEvent(document.getElementById('server-name'), () => {
+      this.openServerModal();
+    });
   },
 
   showPage(pageId) {
