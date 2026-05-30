@@ -482,10 +482,19 @@ const App = {
     list.forEach(station => {
       const item = document.createElement('div');
       item.className = 'server-item' + (station.uid === currentUid ? ' active' : '');
-      item.innerHTML = `
-        <span class="server-item-name">${station.name || '未命名'}</span>
-        ${station.uid === currentUid ? '<span class="server-item-check">&#10003;</span>' : ''}
-      `;
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'server-item-name';
+      nameSpan.textContent = station.name || '未命名';
+      item.appendChild(nameSpan);
+
+      if (station.uid === currentUid) {
+        const checkSpan = document.createElement('span');
+        checkSpan.className = 'server-item-check';
+        checkSpan.textContent = '✓';
+        item.appendChild(checkSpan);
+      }
+
       item.addEventListener('click', () => this.switchStation(station.uid));
       container.appendChild(item);
     });
