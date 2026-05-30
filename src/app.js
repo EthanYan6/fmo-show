@@ -444,6 +444,17 @@ const App = {
     } catch (e) {}
   },
 
+  async openServerModal() {
+    const modal = document.getElementById('server-modal');
+    modal.classList.remove('hidden');
+    await this.fetchStationList();
+  },
+
+  closeServerModal() {
+    const modal = document.getElementById('server-modal');
+    modal.classList.add('hidden');
+  },
+
   async fetchUserPhyDeviceName() {
     try {
       const resp = await this.sendRequest({ type: 'config', subType: 'getUserPhyDeviceName' });
