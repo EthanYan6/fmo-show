@@ -27,6 +27,7 @@ const App = {
   isMuted: false,
   audioChunkQueue: [],
   audioScheduledEndTime: 0,
+  qsoList: [],
   inputSampleRate: 8000,
 
   init() {
@@ -104,12 +105,45 @@ const App = {
       this.openServerModal();
     });
 
+    // 通联日志弹窗
+    addTouchEvent(document.getElementById('qso-modal-close'), () => {
+      this.closeQsoLogModal();
+    });
+
+    addTouchEvent(document.getElementById('qso-modal-overlay'), () => {
+      this.closeQsoLogModal();
+    });
+
+    const qsoStar = document.getElementById('today-qso').closest('.info-item');
+    addTouchEvent(qsoStar, () => {
+      this.openQsoLogModal();
+    });
+
+    // 请喝咖啡弹窗
+    addTouchEvent(document.getElementById('coffee-modal-close'), () => {
+      this.closeCoffeeModal();
+    });
+
+    addTouchEvent(document.getElementById('coffee-modal-overlay'), () => {
+      this.closeCoffeeModal();
+    });
+
+    addTouchEvent(document.querySelector('.credit-text'), () => {
+      this.openCoffeeModal();
+    });
+
     // Escape 键关闭弹窗
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        const modal = document.getElementById('server-modal');
-        if (modal && !modal.classList.contains('hidden')) {
+        const serverModal = document.getElementById('server-modal');
+        const qsoModal = document.getElementById('qso-modal');
+        const coffeeModal = document.getElementById('coffee-modal');
+        if (serverModal && !serverModal.classList.contains('hidden')) {
           this.closeServerModal();
+        } else if (qsoModal && !qsoModal.classList.contains('hidden')) {
+          this.closeQsoLogModal();
+        } else if (coffeeModal && !coffeeModal.classList.contains('hidden')) {
+          this.closeCoffeeModal();
         }
       }
     });
@@ -390,6 +424,7 @@ const App = {
   async fetchAllData() {
     await this.fetchUserInfo();
     await this.fetchStationName();
+    await this.fetchStationList();
     await this.fetchUserPhyDeviceName();
     await this.fetchUserPhyAnt();
     await this.fetchQsoStats();
@@ -403,11 +438,16 @@ const App = {
           this.myCallsign = resp.data.callsign;
           document.getElementById('my-callsign').textContent = this.myCallsign;
         }
-        if (resp.data.wlanIP) {
-          document.getElementById('my-ip').textContent = resp.data.wlanIP;
-        }
       }
     } catch (e) {}
+
+    const settings = localStorage.getItem('fmo-settings');
+    if (settings) {
+      const { ip } = JSON.parse(settings);
+      if (ip) {
+        document.getElementById('my-ip').textContent = ip;
+      }
+    }
     
     try {
       const coordResp = await this.sendRequest({ type: 'config', subType: 'getCordinate' });
@@ -473,13 +513,19 @@ const App = {
 
   async fetchStationList() {
     try {
-      const resp = await this.sendRequest({ type: 'station', subType: 'getListRange', data: { start: 0, count: 100 } });
-      if (resp.code === 0 && resp.data) {
-        const list = resp.data.list || [];
-        const currentResp = await this.sendRequest({ type: 'station', subType: 'getCurrent' });
-        const currentUid = currentResp.code === 0 ? currentResp.data?.uid : 0;
-        this.renderStationList(list, currentUid);
+      const pageSize = 8;
+      let allList = [];
+      let start = 0;
+      while (true) {
+        const resp = await this.sendRequest({ type: 'station', subType: 'getListRange', data: { start, count: pageSize } });
+        const page = resp.data?.list || [];
+        allList = allList.concat(page);
+        if (page.length < pageSize) break;
+        start += pageSize;
       }
+      const currentResp = await this.sendRequest({ type: 'station', subType: 'getCurrent' });
+      const currentUid = currentResp.data?.uid || 0;
+      this.renderStationList(allList, currentUid);
     } catch (e) {
       console.error('获取服务器列表失败:', e);
       const container = document.getElementById('server-list-container');
@@ -534,6 +580,65 @@ const App = {
     }
   },
 
+  async openQsoLogModal() {
+    const modal = document.getElementById('qso-modal');
+    modal.classList.remove('hidden');
+    this.renderQsoLog(this.qsoList);
+  },
+
+  closeQsoLogModal() {
+    document.getElementById('qso-modal').classList.add('hidden');
+  },
+
+  openCoffeeModal() {
+    document.getElementById('coffee-modal').classList.remove('hidden');
+  },
+
+  closeCoffeeModal() {
+    document.getElementById('coffee-modal').classList.add('hidden');
+  },
+
+  renderQsoLog(list) {
+    const container = document.getElementById('qso-log-container');
+    container.innerHTML = '';
+    if (list.length === 0) {
+      container.innerHTML = '<div class="server-list-empty">暂无通联记录</div>';
+      return;
+    }
+    list.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'qso-item';
+
+      const logId = document.createElement('span');
+      logId.className = 'qso-item-logid';
+      logId.textContent = '#' + (item.logId || '--');
+      el.appendChild(logId);
+
+      const callsign = document.createElement('span');
+      callsign.className = 'qso-item-callsign';
+      callsign.textContent = item.toCallsign || '--';
+      el.appendChild(callsign);
+
+      const grid = document.createElement('span');
+      grid.className = 'qso-item-grid';
+      grid.textContent = item.grid || '--';
+      el.appendChild(grid);
+
+      const time = document.createElement('span');
+      time.className = 'qso-item-time';
+      if (item.timestamp) {
+        const d = new Date(item.timestamp * 1000);
+        const pad = n => String(n).padStart(2, '0');
+        time.textContent = `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      } else {
+        time.textContent = '--';
+      }
+      el.appendChild(time);
+
+      container.appendChild(el);
+    });
+  },
+
   async fetchUserPhyDeviceName() {
     try {
       const resp = await this.sendRequest({ type: 'config', subType: 'getUserPhyDeviceName' });
@@ -558,34 +663,33 @@ const App = {
       let total = 0;
       let todayCount = 0;
       let page = 0;
-      const maxPages = 1000;
-      
-      for (page = 0; page < maxPages; page++) {
+      const allList = [];
+
+      while (true) {
         const resp = await this.sendRequest({ type: 'qso', subType: 'getList', data: { page } });
         if (resp.code === 0 && resp.data && resp.data.list) {
           const list = resp.data.list;
           if (list.length === 0) break;
-          
+
           if (page === 0 && list[0]) {
             total = list[0].logId;
           }
-          
+
           for (const item of list) {
+            allList.push(item);
             if (item.timestamp >= todayStart) {
               todayCount++;
-            } else {
-              document.getElementById('today-qso').textContent = todayCount;
-              document.getElementById('total-qso').textContent = total;
-              return;
             }
           }
-          
+
           if (list.length < 20) break;
+          page++;
         } else {
           break;
         }
       }
-      
+
+      this.qsoList = allList;
       document.getElementById('today-qso').textContent = todayCount;
       document.getElementById('total-qso').textContent = total;
     } catch (e) {}
@@ -611,6 +715,7 @@ const App = {
       const d = ev.data;
       if (d.isSpeaking && d.callsign) {
         document.getElementById('incoming-callsign').textContent = d.callsign;
+        this.updateCallsignBadge(d.callsign);
         if (d.grid) {
           document.getElementById('peer-grid').textContent = d.grid;
         }
@@ -619,6 +724,17 @@ const App = {
     if (ev.type === 'station' && ev.subType === 'update' && ev.data && ev.data.name) {
       document.getElementById('server-name').textContent = ev.data.name;
     }
+  },
+
+  updateCallsignBadge(callsign) {
+    const badge = document.getElementById('callsign-badge');
+    if (!callsign || callsign === '------') {
+      badge.classList.remove('visible');
+      return;
+    }
+    const count = this.qsoList.filter(item => item.toCallsign === callsign).length;
+    badge.textContent = count > 0 ? count : '新';
+    badge.classList.add('visible');
   },
 
   handleMessage(data) {},

@@ -33,49 +33,47 @@
     <div class="main-center">
       <div class="top-row">
         <div class="signal-indicator">
-          <img src="svg/网络_信号发射.svg" class="signal-icon" alt="信号">
+          <img src="src/svg/网络_信号发射.svg" class="signal-icon" alt="信号">
           <div class="signal-text">
-            <span id="connection-text" class="connection-text">未连接</span>
+            <div class="connection-row"><span id="connection-text" class="connection-text">未连接</span><span class="version-text">v1.2</span></div>
             <span id="center-datetime" class="datetime-text">----/--/-- --:--</span>
           </div>
         </div>
         <div class="filter-info">
-          <img src="svg/ip.svg" class="filter-icon" alt="IP">
-          <span id="my-ip">------</span>
-          <img src="svg/定位.svg" class="filter-icon" alt="网格">
-          <span id="grid-locator">------</span>
+          <span class="filter-group"><img src="src/svg/ip.svg" class="filter-icon" alt="IP"><span id="my-ip">------</span></span>
+          <span class="filter-group"><img src="src/svg/定位.svg" class="filter-icon" alt="网格"><span id="grid-locator">------</span></span>
         </div>
       </div>
       <div class="callsign-row">
-        <span id="incoming-callsign" class="callsign">------</span>
+        <span class="callsign-group"><span id="incoming-callsign" class="callsign">------</span><span id="callsign-badge" class="callsign-badge"></span></span>
         <span id="server-name" class="server-badge">SERVER</span>
       </div>
       <div class="info-row">
         <span class="info-item">
-          <img src="svg/定位.svg" class="info-icon" alt="对方网格">
+          <img src="src/svg/定位.svg" class="info-icon" alt="对方网格">
           <span id="peer-grid">------</span>
         </span>
         <span class="info-item">
-          <img src="svg/对讲机.svg" class="info-icon" alt="对方设备">
+          <img src="src/svg/对讲机.svg" class="info-icon" alt="对方设备">
           <span id="peer-device">------</span>
         </span>
         <span class="info-item">
-          <img src="svg/定位 (1).svg" class="info-icon" alt="对方天线">
+          <img src="src/svg/定位 (1).svg" class="info-icon" alt="对方天线">
           <span id="peer-ant">------</span>
         </span>
         <span class="info-item">
-          <img src="svg/喇叭.svg" class="info-icon" alt="我的呼号">
+          <img src="src/svg/喇叭.svg" class="info-icon" alt="我的呼号">
           <span id="my-callsign">------</span>
         </span>
-        <span class="info-item">
-          <img src="svg/五角星.svg" class="info-icon" alt="通联">
+        <span class="info-item clickable">
+          <img src="src/svg/五角星.svg" class="info-icon" alt="通联">
           <span id="today-qso">--</span>/<span id="total-qso">--</span>
         </span>
       </div>
       <div class="footer-row">
-        <img src="svg/wulian.svg" class="footer-icon" alt="物联">
+        <img src="src/svg/wulian.svg" class="footer-icon" alt="物联">
         <span class="footer-text">地球online提醒您：您并不孤单，共有 <span id="busuanzi-value">--</span> 人与您一起守听。</span>
-        <span class="credit-text">Powered by BD1AHN</span>
+        <span class="credit-text clickable"><img src="src/svg/咖啡.svg" class="credit-icon" alt="coffee"> Powered by BD1AHN</span>
       </div>
     </div>
   </div>
@@ -176,6 +174,42 @@
       </div>
       <div class="modal-body" id="server-list-container">
         <!-- 服务器列表项动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 通联日志弹窗 -->
+  <div id="qso-modal" class="modal hidden">
+    <div class="modal-overlay" id="qso-modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>通联日志</span>
+        <button class="modal-close" id="qso-modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="qso-log-container">
+        <!-- 通联日志项动态生成 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 请喝咖啡弹窗 -->
+  <div id="coffee-modal" class="modal hidden">
+    <div class="modal-overlay" id="coffee-modal-overlay"></div>
+    <div class="modal-content coffee-modal-content">
+      <div class="modal-header">
+        <span>打赏</span>
+        <button class="modal-close" id="coffee-modal-close">&times;</button>
+      </div>
+      <div class="modal-body coffee-modal-body">
+        <p class="coffee-tip">如果对你有帮助的话，请他喝杯咖啡吧~</p>
+        <div class="coffee-images">
+          <div class="coffee-img-item">
+            <img src="src/image/wechat_pay.jpg" alt="微信赞赏">
+          </div>
+          <div class="coffee-img-item">
+            <img src="src/image/ali_pay.jpg" alt="支付宝赞赏">
+          </div>
+        </div>
       </div>
     </div>
   </div>
