@@ -3,6 +3,9 @@
 
 ![fmo-show 介绍](src/image/fmo-show介绍.jpg)
 
+![黑白模式](src/image/fmo黑白.jpg)
+![彩色模式](src/image/fmo彩色.jpg)
+
 ## 构建系统
 
 ### 目录结构

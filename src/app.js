@@ -29,6 +29,7 @@ const App = {
   audioScheduledEndTime: 0,
   qsoList: [],
   inputSampleRate: 8000,
+  isColorMode: false,
 
   init() {
     this.bindEvents();
@@ -40,6 +41,7 @@ const App = {
     this.checkFirstVisit();
     this.initAudio();
     this.loadMuteState();
+    this.loadTheme();
   },
 
   bindEvents() {
@@ -75,6 +77,10 @@ const App = {
 
     addTouchEvent(document.getElementById('fullscreen-btn'), () => {
       this.toggleFullscreen();
+    });
+
+    addTouchEvent(document.getElementById('theme-toggle'), () => {
+      this.toggleTheme();
     });
     
     const speakerIcon = document.querySelector('img[alt="我的呼号"]');
@@ -868,6 +874,30 @@ const App = {
     this.updateMuteIcon();
   },
 
+  loadTheme() {
+    const saved = localStorage.getItem('fmo-color-mode');
+    this.isColorMode = saved === 'true';
+    this.applyTheme();
+  },
+
+  toggleTheme() {
+    this.isColorMode = !this.isColorMode;
+    localStorage.setItem('fmo-color-mode', this.isColorMode.toString());
+    this.applyTheme();
+  },
+
+  applyTheme() {
+    const toggle = document.getElementById('theme-toggle');
+    if (this.isColorMode) {
+      document.body.classList.add('color-mode');
+      toggle.classList.add('color-mode');
+    } else {
+      document.body.classList.remove('color-mode');
+      toggle.classList.remove('color-mode');
+    }
+    this.updateMuteIcon();
+  },
+
   toggleMute() {
     this.isMuted = !this.isMuted;
     localStorage.setItem('fmo-muted', this.isMuted.toString());
@@ -896,13 +926,13 @@ const App = {
   updateMuteIcon() {
     const speakerIcon = document.querySelector('img[alt="我的呼号"]');
     if (!speakerIcon) return;
-    
+
     if (this.isMuted) {
       speakerIcon.style.opacity = '0.3';
-      speakerIcon.style.filter = 'grayscale(100%)';
+      speakerIcon.style.filter = this.isColorMode ? 'invert(1) grayscale(100%)' : 'grayscale(100%)';
     } else {
       speakerIcon.style.opacity = '1';
-      speakerIcon.style.filter = 'none';
+      speakerIcon.style.filter = this.isColorMode ? 'invert(1)' : 'none';
     }
   },
 

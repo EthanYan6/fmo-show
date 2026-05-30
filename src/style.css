@@ -10,6 +10,7 @@
   --gray: #666666;
   --light-gray: #eeeeee;
   --border-color: #cccccc;
+  --accent: #FF8800;
 }
 
 html, body {
@@ -29,6 +30,270 @@ html, body {
 
 .page.active {
   display: flex;
+}
+
+/* ===== 主题切换开关 ===== */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.theme-label-left,
+.theme-label-right {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gray);
+}
+
+.theme-toggle-track {
+  width: 32px;
+  height: 18px;
+  background: var(--light-gray);
+  border: 1px solid var(--border-color);
+  border-radius: 9px;
+  position: relative;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.theme-toggle-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--black);
+  border-radius: 50%;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.theme-toggle.color-mode .theme-toggle-track {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.theme-toggle.color-mode .theme-toggle-thumb {
+  transform: translateX(14px);
+  background: var(--white);
+}
+
+.theme-toggle.color-mode .theme-label-left {
+  color: var(--gray);
+}
+
+.theme-toggle.color-mode .theme-label-right {
+  color: var(--white);
+}
+
+/* ===== 彩色模式 ===== */
+body.color-mode {
+  background: var(--black);
+  color: var(--white);
+}
+
+body.color-mode .top-bar {
+  border-bottom-color: #333;
+}
+
+body.color-mode .top-bar {
+  color: var(--white);
+}
+
+body.color-mode .icon-btn {
+  color: var(--white);
+}
+
+body.color-mode .theme-toggle .theme-label-left {
+  color: #888;
+}
+
+body.color-mode .theme-toggle .theme-label-right {
+  color: var(--white);
+}
+
+body.color-mode .theme-toggle-track {
+  border-color: #555;
+}
+
+body.color-mode .connection-text {
+  color: var(--white);
+}
+
+body.color-mode .version-text {
+  color: #999;
+}
+
+body.color-mode .datetime-text {
+  color: #999;
+}
+
+body.color-mode .filter-info {
+  color: #ccc;
+}
+
+body.color-mode .filter-icon,
+body.color-mode .info-icon,
+body.color-mode .signal-icon,
+body.color-mode .footer-icon {
+  filter: invert(1);
+}
+
+body.color-mode .callsign {
+  color: var(--accent);
+}
+
+body.color-mode .callsign-badge {
+  background: var(--white);
+  color: var(--black);
+}
+
+body.color-mode .server-badge {
+  background: var(--accent);
+  color: var(--black);
+}
+
+body.color-mode .info-row {
+  color: var(--white);
+}
+
+body.color-mode .footer-row {
+  color: #999;
+}
+
+body.color-mode .credit-text {
+  color: #999;
+}
+
+body.color-mode .settings-header {
+  border-bottom-color: #333;
+}
+
+body.color-mode .back-btn {
+  color: var(--white);
+}
+
+body.color-mode .settings-title {
+  color: var(--white);
+}
+
+body.color-mode .form-group label {
+  color: var(--white);
+}
+
+body.color-mode .form-group input {
+  background: #222;
+  color: var(--white);
+  border-color: #444;
+}
+
+body.color-mode .form-group input:focus {
+  border-color: var(--accent);
+}
+
+body.color-mode .form-hint {
+  color: #888;
+}
+
+body.color-mode .save-btn {
+  background: var(--accent);
+  color: var(--black);
+}
+
+body.color-mode .save-btn:active {
+  background: #cc7000;
+}
+
+body.color-mode .save-status.success {
+  background: var(--accent);
+  color: var(--black);
+}
+
+body.color-mode .settings-section {
+  border-bottom-color: #333;
+}
+
+body.color-mode .section-title {
+  color: var(--white);
+}
+
+body.color-mode .protocol-select {
+  background: #222;
+  color: var(--white);
+  border-color: #444;
+}
+
+body.color-mode .connection-status {
+  background: #1a1a1a;
+}
+
+body.color-mode .status-label {
+  color: #888;
+}
+
+body.color-mode .status-value {
+  color: var(--white);
+}
+
+body.color-mode .modal-content {
+  background: #1a1a1a;
+}
+
+body.color-mode .modal-header {
+  border-bottom-color: #333;
+  color: var(--white);
+}
+
+body.color-mode .modal-close {
+  color: var(--white);
+}
+
+body.color-mode .server-item {
+  color: var(--white);
+}
+
+body.color-mode .server-item:active {
+  background: #333;
+}
+
+body.color-mode .server-item.active {
+  background: var(--accent);
+  color: var(--black);
+}
+
+body.color-mode .server-list-empty {
+  color: #888;
+}
+
+body.color-mode .qso-item {
+  color: var(--white);
+  border-bottom-color: #333;
+}
+
+body.color-mode .qso-item-logid {
+  color: #888;
+}
+
+body.color-mode .qso-item-time {
+  color: #888;
+}
+
+body.color-mode .qso-item-grid {
+  color: #888;
+}
+
+body.color-mode .coffee-tip {
+  color: #999;
+}
+
+body.color-mode .coffee-img-item img {
+  border-color: #444;
+}
+
+body.color-mode .landscape-settings-btn {
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* ===== 顶部栏 ===== */
