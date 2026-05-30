@@ -500,6 +500,19 @@ const App = {
     });
   },
 
+  async switchStation(uid) {
+    try {
+      const resp = await this.sendRequest({ type: 'station', subType: 'setCurrent', data: { uid } });
+      if (resp.code === 0) {
+        this.closeServerModal();
+        await this.fetchStationName();
+        await this.fetchAllData();
+      }
+    } catch (e) {
+      console.error('切换服务器失败:', e);
+    }
+  },
+
   async fetchUserPhyDeviceName() {
     try {
       const resp = await this.sendRequest({ type: 'config', subType: 'getUserPhyDeviceName' });
