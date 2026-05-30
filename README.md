@@ -1,6 +1,8 @@
 # fmo-show
 做一个简约美观，墨水屏可以直接访问fmo的网页端
 
+![fmo-show 介绍](src/image/fmo-show介绍.jpg)
+
 ## 构建系统
 
 ### 目录结构
