@@ -103,6 +103,16 @@ const App = {
     addTouchEvent(document.getElementById('server-name'), () => {
       this.openServerModal();
     });
+
+    // Escape 键关闭弹窗
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('server-modal');
+        if (modal && !modal.classList.contains('hidden')) {
+          this.closeServerModal();
+        }
+      }
+    });
   },
 
   showPage(pageId) {
@@ -446,6 +456,12 @@ const App = {
 
   async openServerModal() {
     const modal = document.getElementById('server-modal');
+    const container = document.getElementById('server-list-container');
+    container.innerHTML = '';
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'server-list-empty';
+    loadingDiv.textContent = '加载中...';
+    container.appendChild(loadingDiv);
     modal.classList.remove('hidden');
     await this.fetchStationList();
   },
@@ -466,7 +482,12 @@ const App = {
       }
     } catch (e) {
       console.error('获取服务器列表失败:', e);
-      this.closeServerModal();
+      const container = document.getElementById('server-list-container');
+      container.innerHTML = '';
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'server-list-empty';
+      errorDiv.textContent = '获取服务器列表失败，请重试';
+      container.appendChild(errorDiv);
     }
   },
 
@@ -475,7 +496,7 @@ const App = {
     container.innerHTML = '';
 
     if (list.length === 0) {
-      container.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--gray);">暂无可用服务器</div>';
+      container.innerHTML = '<div class="server-list-empty">暂无可用服务器</div>';
       return;
     }
 
