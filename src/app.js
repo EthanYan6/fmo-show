@@ -29,6 +29,7 @@ const App = {
   audioScheduledEndTime: 0,
   qsoList: [],
   lastGridMap: {},
+  myGrid: '',
   inputSampleRate: 8000,
   isColorMode: false,
 
@@ -463,7 +464,7 @@ const App = {
         const lon = coordResp.data.longitude;
         if (lat !== undefined && lon !== undefined) {
           const grid = this.latLonToGrid(lat, lon);
-          document.getElementById('grid-locator').textContent = grid;
+          this.myGrid = grid;
         }
       }
     } catch (e) {}
@@ -844,7 +845,7 @@ const App = {
 
   async fetchUserPhyAnt() {
     try {
-      var myGrid = document.getElementById('grid-locator').textContent;
+      var myGrid = this.myGrid;
       if (myGrid && myGrid !== '------') {
         document.getElementById('peer-ant').textContent = this.gridToLocation(myGrid);
       }
@@ -930,7 +931,7 @@ const App = {
         }
         // 回声测试等场景, 用自己网格兜底
         if (!grid && lookupCallsign === this.myCallsign) {
-          const myGrid = document.getElementById('grid-locator').textContent;
+          const myGrid = this.myGrid;
           if (myGrid && myGrid !== '------') grid = myGrid;
         }
         if (grid) {
