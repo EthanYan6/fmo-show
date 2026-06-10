@@ -427,10 +427,12 @@ body.color-mode .landscape-settings-btn {
 }
 
 .callsign-group {
-  flex: 1;
+  width: 50%;
   display: flex;
   align-items: flex-start;
   gap: 6px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .callsign {
@@ -440,6 +442,8 @@ body.color-mode .landscape-settings-btn {
   line-height: 1.1;
   color: var(--black);
   text-align: left;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .callsign-badge {
@@ -453,6 +457,8 @@ body.color-mode .landscape-settings-btn {
   vertical-align: top;
   line-height: 1.4;
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .callsign-badge.visible {
@@ -460,8 +466,11 @@ body.color-mode .landscape-settings-btn {
 }
 
 .server-badge {
-  flex: 1;
+  width: 50%;
+  flex-shrink: 0;
   font-size: 36px;
+  overflow: hidden;
+  min-width: 0;
   font-weight: 700;
   padding: 10px 24px;
   background: var(--black);
@@ -488,6 +497,8 @@ body.color-mode .landscape-settings-btn {
   display: flex;
   align-items: center;
   gap: 4px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .info-item.clickable {
